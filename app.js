@@ -1,4 +1,5 @@
 const express = require('express');
+
 const app = express();
 
 const tourRouter = require('./routes/tourRoutes');
@@ -10,7 +11,6 @@ app.use((req, res, next) => {
   next();
 });
 // ----------------------------------------
-
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
