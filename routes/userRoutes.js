@@ -2,11 +2,12 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const validate = require('../middlewares/validate');
-const { userZodSchema } = require('../utils/zodSchemas');
+const { userZodSchema } = require('../models/zodSchemas');
 
 const router = express.Router();
 
 router.post('/signup', validate(userZodSchema), authController.signup);
+router.post('/login', authController.login);
 
 router
   .route('/')
