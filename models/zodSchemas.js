@@ -7,6 +7,12 @@ const userZodSchema = z
     photoUrl: z.string().url('Invalid URL').optional(),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     passwordConfirm: z.string().min(6),
+    passwordChangedAt: z
+      .preprocess(
+        (arg) => (typeof arg === 'string' ? new Date(arg) : arg),
+        z.date(),
+      )
+      .optional(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: 'Passwords do not match',
