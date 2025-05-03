@@ -5,6 +5,7 @@ const userZodSchema = z
     name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid email address').toLowerCase().trim(),
     photoUrl: z.string().url('Invalid URL').optional(),
+    role: z.enum(['user', 'guide', 'lead-guide', 'admin']).default('user'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     passwordConfirm: z.string().min(6),
     passwordChangedAt: z
