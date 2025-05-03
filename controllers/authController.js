@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-
 const AppError = require('../utils/appError');
 
 const signToken = (id) => {
@@ -100,3 +100,16 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    next(new AppError('There is no user with this email address', 404));
+  }
+
+  const resetToken = user.createPasswordResetToken();
+  await user.save();
+});
+
+exports.resetPassword = (req, res, next) => {};
