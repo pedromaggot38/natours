@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
-const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const { userUpdateMeZodSchema } = require('../models/zodSchemas');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
@@ -19,8 +20,26 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError('This route is not for password updates', 400));
   }
 
+  const parseResult = userUpdateMeZodSchema.safeParse(req.body);
+
+  if (!parseResult.success) {
+    return next(new AppError('Invalid data', 400));
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    parseResult.data,
+    {
+      new: true,
+      runValidators: false,
+    },
+  );
+
   res.status(200).json({
     status: 'success',
+    data: {
+      user: updatedUser,
+    },
   });
 });
 
