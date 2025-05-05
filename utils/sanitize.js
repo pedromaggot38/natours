@@ -1,10 +1,11 @@
 const { JSDOM } = require('jsdom');
-const DOMPurify = require('dompurify');
+const createDOMPurify = require('dompurify');
 
 const { window } = new JSDOM('');
-const purify = DOMPurify(window);
+const DOMPurify = createDOMPurify(window);
 
-module.exports = (dirty) => purify.sanitize(dirty);
+module.exports = (dirty) =>
+  DOMPurify.sanitize(dirty, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
 // EXEMPLO DE COMO USAR
 // ---------------------------------------------------
