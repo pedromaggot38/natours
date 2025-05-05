@@ -1,3 +1,4 @@
+const hpp = require('hpp');
 const helmet = require('helmet');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
@@ -38,6 +39,20 @@ app.use(express.json({ limit: '10kb' }));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanatize());
+
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  }),
+);
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
