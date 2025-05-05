@@ -1,6 +1,7 @@
 const helmet = require('helmet');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const mongoSanatize = require('express-mongo-sanitize');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -13,6 +14,16 @@ const app = express();
 
 // Set security HTTP headers
 app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"], // bloqueia scripts externos
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  }),
+);
 
 // Limit requests from the same API
 const limiter = rateLimit({
@@ -24,6 +35,9 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanatize());
 
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
